@@ -1,0 +1,27 @@
+#pragma once
+#pragma warning (disable : 4996)
+#include <iostream>
+class Hall
+{
+private:
+	unsigned id;
+	size_t rows;
+	size_t seatsByRow;
+	
+public:
+	Hall(const unsigned, const size_t, const size_t);
+
+	Hall& operator=(const Hall& other);
+
+	unsigned getId() const;
+	size_t getRows() const;
+	size_t getSeatsByRow() const;
+	size_t getSeats() const;
+	
+
+	void print() const;
+
+
+};
+
+std::ostream& operator<<(std::ostream&, const Hall&);
