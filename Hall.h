@@ -11,8 +11,6 @@ private:
 public:
 	Hall(const unsigned, const size_t, const size_t);
 
-	Hall& operator=(const Hall& other);
-
 	unsigned getId() const;
 	size_t getRows() const;
 	size_t getSeatsByRow() const;
