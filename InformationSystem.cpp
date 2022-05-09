@@ -26,14 +26,14 @@ void InformationSystem::free()
 
 void InformationSystem::reallocate()
 {
-    Event** newEvents = new Event * [cnt * 2];
+    capacity = cnt * 2;
+    Event** newEvents = new Event * [capacity];
     for (size_t i = 0; i < cnt; ++i)
     {
-        newEvents[i] = events[i];
+        newEvents[i] = new Event(*(events[i]));
     }
-    delete[] events;
-    events = newEvents;
-    
+    free();
+    events = newEvents;    
 }
 
 InformationSystem::InformationSystem()
@@ -79,73 +79,152 @@ void InformationSystem::pushEvent(Event& event)
         reallocate();
     for (size_t i = 0; i < cnt; ++i)
     {
-        if (events[i]->getHall() == event.getHall() && events[i]->getDate() == event.getDate())
-            std::cout<<"fail";
+        if (events[i]->getHallId() == event.getHallId() && events[i]->getDate() == event.getDate())
+            throw;
     }
     events[cnt++] = &event;
     capacity--;
 }
 
-size_t InformationSystem::freeSeats(const char* name, Date& date)
+void InformationSystem::freeSeats(const std::string name, Date& date)
 {
-    size_t freeSeats = 0;
     for (size_t i = 0; i < cnt; i++)
     {
-        if ((strcmp(events[i]->getName(), name)==0) && events[i]->getDate() == date)
-            freeSeats += events[i]->getFreeSeats();      
-    }
-
-    return freeSeats;
+        if (events[i]->getName() == name && events[i]->getDate() == date)
+            std::cout << "Free seats for " << name << " are: " << events[i]->getFreeSeats() << std::endl;
+    }   
 }
 
-void InformationSystem::reserveTickets(const char* name, Date& date, size_t row, size_t col, const char* password)
+void InformationSystem::reserveTickets(const std::string name, Date& date, size_t row, size_t col, std::string password)
 {
     for (size_t i = 0; i < cnt; i++)
     {
-        if ((strcmp(events[i]->getName(), name) == 0) && events[i]->getDate() == date)
-            strcpy(events[i]->getSeat(row, col), password);
-    }
-}
-
-void InformationSystem::unReserveTickets(const char* name, Date& date, size_t row, size_t col, const char* password)
-{
-    for (size_t i = 0; i < cnt; i++)
-    {
-        if ((strcmp(events[i]->getName(), name) == 0) && events[i]->getDate() == date 
-            && (strcmp(events[i]->getSeat(row, col), password) == 0))
-            strcpy(events[i]->getSeat(row, col), "2");
+        if (events[i]->getName() == name && events[i]->getDate() == date)
+        {
+            events[i]->updateSeat(row, col, password, seatTypes::reserve);
+            std::cout << "Ticket for " << name << " with seat " << row << col << " and password " << password
+                << " is successfully reserved!" << std::endl;
+        }
     }
 }
 
-void InformationSystem::buyTickets(const char* name, Date& date, size_t row, size_t col)
+void InformationSystem::unReserveTickets(const std::string name, Date& date, size_t row, size_t col, std::string password)
 {
     for (size_t i = 0; i < cnt; i++)
     {
-        if ((strcmp(events[i]->getName(), name) == 0) && events[i]->getDate() == date)
-            if (events[i]->getSeat(row, col) != "0")
+        if (events[i]->getName() == name && events[i]->getDate() == date
+            && events[i]->getSeat(row, col).password == password && events[i]->getSeatType(row, col) == seatTypes::reserve)
+        {
+            events[i]->updateSeat(row, col, "", seatTypes::empty);
+            std::cout << "Ticket for " << name << " with seat " << row << col << " and password " << password
+                << " is successfully unreserved!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Ticket for " << name << " with seat " << row << col << " is did not reserve!";
+        }
+            
+    }
+}
+
+void InformationSystem::buyTickets(const std::string name, Date& date, size_t row, size_t col)
+{
+    for (size_t i = 0; i < cnt; i++)
+    {
+        if (events[i]->getName() == name && events[i]->getDate() == date)
+        {
+            if (events[i]->getSeatType(row, col) != seatTypes::sold)
             {
-                if (strcmp(events[i]->getSeat(row, col), "2") == 0)
-                    strcpy(events[i]->getSeat(row, col), "1");
+                if (events[i]->getSeatType(row, col) == seatTypes::empty)
+                {
+                    events[i]->updateSeat(row, col, "", seatTypes::sold);
+                    std::cout << "Ticket for " << name << " with seat " << row << col
+                        << " is successfully purchased!" << std::endl;
+                }
                 else
                 {
-                    char* password = nullptr;
-                    std::cout << "Enter a password: ";
-                    std::cin.getline(password, 100);
-                    if (strcmp(events[i]->getSeat(row, col), password) == 0)
-                        strcpy(events[i]->getSeat(row, col), "1");
+                    std::string password = "";
+                    std::cout << "Enter a password for seat " << row << col << ": ";
+                    std::cin >> password;
+                    if (events[i]->getSeat(row, col).password == password)
+                    {
+                        std::cout << "Correct password!" << std::endl;
+                        events[i]->updateSeat(row, col, "", seatTypes::sold);
+                        std::cout << "Ticket for " << name << " with seat " << row << col
+                            << " is successfully purchased!" << std::endl;
+                        password.clear();
+                    }
                     else
-                        std::cout << "Incorect password!" << std::endl;
+                        std::cout << "Incorrect password!" << std::endl;
                 }
             }
             else
-                std::cout << "Ticket for this seat is sold!" << std::endl;
+            {
+                std::cout << "Ticket for " << name << " with seat " << row << col << " is sold!" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Event with this name or date does not exist!" << std::endl;
+        }
+                          
     }
 }
 
-void InformationSystem::print() const
+std::ostream& InformationSystem::listWithReservetion(std::string name, Date& date)
 {
-    std::cout << events;
+    std::ofstream file("name");
+
+    if (!file.is_open())
+    {
+        std::cout << "File can't be opened!" << std::endl;
+        
+    }
+    if (name == "ALL")
+    {
+        for (size_t i = 0; i < cnt; ++i)
+        {
+            if (events[i]->getDate() == date)
+            {
+                size_t rows = events[i]->getHall().getRows();
+                size_t cols = events[i]->getHall().getSeatsByRow();
+                for (size_t i = 0; i < rows; i++)
+                {
+                    for (size_t j = 0; j < cols; j++)
+                    {
+                        if (events[i]->getSeatType(i, j) == seatTypes::reserve)
+                            file << i << j << " ";
+                    }
+                    file << std::endl;
+                }
+            }
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < cnt; i++)
+        {
+            if (events[i]->getName() == name && events[i]->getDate() == date)
+            {
+                size_t rows = events[i]->getHall().getRows();
+                size_t cols = events[i]->getHall().getSeatsByRow();
+                for (size_t i = 0; i < rows; i++)
+                {
+                    for (size_t j = 0; j < cols; j++)
+                    {
+                        if (events[i]->getSeatType(i, j) == seatTypes::reserve)
+                            file << i << j << " ";
+                    }
+                    file << std::endl;
+                }
+            }
+        }        
+    }
+    return file;
+    file.close();
 }
+
+
 /*
 std::ostream& operator<<(std::ostream& out, const InformationSystem& system)
 {
