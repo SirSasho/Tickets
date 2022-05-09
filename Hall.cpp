@@ -4,18 +4,6 @@ Hall::Hall(const unsigned id, const size_t rows, const size_t seatsByRow)
 	:id(id), rows(rows), seatsByRow(seatsByRow)
 {}
 
-Hall& Hall::operator=(const Hall & other)
-{
-	if (this != &other)
-	{
-		id = other.id;
-		rows = other.rows;
-		seatsByRow = other.seatsByRow;
-	}
-
-	return *this;
-}
-
 unsigned Hall::getId() const
 {
 	return id;
