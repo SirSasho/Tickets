@@ -1,5 +1,7 @@
 #pragma once
 #include "Event.h"
+#include <iostream>
+#include <fstream>
 class InformationSystem
 {
 private:
@@ -20,11 +22,11 @@ public:
 	size_t getCnt() const;
 	size_t getCapacity() const;
 	void pushEvent(Event& event);
-	size_t freeSeats(const char* name, Date& date);
-	void reserveTickets(const char* name, Date& date, size_t row, size_t col, const char* password);
-	void unReserveTickets(const char* name, Date& date, size_t row, size_t col, const char* password);
-	void buyTickets(const char* name, Date& date, size_t row, size_t col);
-	void print() const;
+	void freeSeats(const std::string name, Date& date);
+	void reserveTickets(const std::string, Date& date, size_t row, size_t col, std::string password);
+	void unReserveTickets(const std::string, Date& date, size_t row, size_t col, std::string password);
+	void buyTickets(const std::string, Date& date, size_t row, size_t col);
+	std::ostream& listWithReservetion(std::string name, Date& date);
 
 	
 };
