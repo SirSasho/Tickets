@@ -4,17 +4,6 @@ Date::Date(size_t day, size_t month, size_t year)
 	:day(day), month(month), year(year)
 {}
 
-Date& Date::operator=(const Date & other)
-{
-	if (this != &other)
-	{
-		day = other.day;
-		month = other.month;
-		year = other.year;
-	}
-	return *this;
-}
-
 size_t Date::getYear() const
 {
 	return year;
