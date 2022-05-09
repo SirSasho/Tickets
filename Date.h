@@ -9,7 +9,7 @@ private:
 	
 public:
 	Date(size_t day, size_t month, size_t year);
-	Date& operator=(const Date& other);
+	
 
 	size_t getYear() const;
 	size_t getMonth() const;
