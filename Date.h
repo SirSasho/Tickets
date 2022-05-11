@@ -20,3 +20,4 @@ public:
 
 std::ostream& operator<<(std::ostream&, const Date&);
 bool operator==(const Date& lhs, const Date& rhs);
+bool operator>(const Date& lhs, const Date& rhs);
