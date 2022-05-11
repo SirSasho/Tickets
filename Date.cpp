@@ -35,3 +35,27 @@ bool operator==(const Date& lhs, const Date& rhs)
 		lhs.getMonth() == rhs.getMonth() &&
 		lhs.getYear() == rhs.getYear();
 }
+
+bool operator>(const Date& lhs, const Date& rhs)
+{
+	if (lhs.getYear() > rhs.getYear())
+		return true;
+	else if(lhs.getYear() == rhs.getYear())
+	{
+		if (lhs.getMonth() > rhs.getMonth())
+		{
+			return true;
+		}
+		else if (lhs.getMonth() == rhs.getMonth())
+		{
+			if (lhs.getDay() > rhs.getDay())
+			{
+				return true;
+			}			
+		}
+	}
+	else
+	{
+		return false;
+	}	
+}
