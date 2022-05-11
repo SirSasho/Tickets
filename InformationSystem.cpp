@@ -1,6 +1,6 @@
 #include "InformationSystem.h"
 
-
+/*
 void InformationSystem::copyFrom(const InformationSystem& other)
 {
     capacity = other.capacity;
@@ -13,36 +13,37 @@ void InformationSystem::copyFrom(const InformationSystem& other)
         events[i] = new Event(*(other.events[i]));
     }
 }
-
+*/
 void InformationSystem::free()
 {
     for (size_t i = 0; i < cnt; ++i)
     {
         events[i]->~Event();
+        //delete events[i];
     }
 
-    delete[] events;
+    events.clear();
 }
-
+/*
 void InformationSystem::reallocate()
 {
     capacity = cnt * 2;
     Event** newEvents = new Event * [capacity];
     for (size_t i = 0; i < cnt; ++i)
     {
-        newEvents[i] = new Event(*(events[i]));
+        newEvents[i] = events[i];
     }
     free();
-    events = newEvents;    
+    events = newEvents;        
 }
-
+*/
 InformationSystem::InformationSystem()
 {
-	capacity = 1;
+	//capacity = 1;
 	cnt = 0;
-	events = new Event * [capacity];
+    events = {};
 }
-
+/*
 InformationSystem::InformationSystem(const InformationSystem& other)
 {
     copyFrom(other);
@@ -57,7 +58,7 @@ InformationSystem& InformationSystem::operator=(const InformationSystem& other)
     }
     return *this;
 }
-
+*/
 InformationSystem::~InformationSystem()
 {
     free();
@@ -67,24 +68,26 @@ size_t InformationSystem::getCnt() const
 {
     return cnt;
 }
-
+/*
 size_t InformationSystem::getCapacity() const
 {
     return capacity;
 }
-
-void InformationSystem::pushEvent(Event& event)
+*/
+void InformationSystem::pushEvent(Event* event)
 {
-    if (capacity < 1)
-        reallocate();
+  //  if (events.size() == cnt)
+     //   events.resize(cnt * 2);
+        //reallocate();
     for (size_t i = 0; i < cnt; ++i)
     {
-        if (events[i]->getHallId() == event.getHallId() && events[i]->getDate() == event.getDate())
+        if (events[i]->getHallId() == event->getHallId() && events[i]->getDate() == event->getDate())
             throw;
     }
-    events[cnt++] = new Event(event);
+    events.push_back(event);
+    ++cnt;
+    //events[cnt++] = new Event(event);
     std::cout << "Pushed event!" << std::endl;
-    capacity--;
 }
 
 void InformationSystem::freeSeats(const std::string name, Date& date)
@@ -106,7 +109,6 @@ void InformationSystem::reserveTickets(const std::string name, Date& date, size_
             std::cout << "Ticket for " << name << " with seat " << row << col << " and password " << password
                 << " is successfully reserved!" << std::endl;
         }
-        std::cout << std::endl;
     }
 }
 
@@ -164,12 +166,7 @@ void InformationSystem::buyTickets(const std::string name, Date& date, size_t ro
             {
                 std::cout << "Ticket for " << name << " with seat " << row << col << " is sold!" << std::endl;
             }
-        }
-        else
-        {
-            std::cout << "Event with this name or date does not exist!" << std::endl;
-        }
-                          
+        }                          
     }
 }
 
@@ -189,23 +186,7 @@ std::ostream& InformationSystem::listWithReservetion(std::string name, Date& dat
         {
             if (events[k]->getDate() == date)
             {
-                size_t rows = events[k]->getHall().getRows();
-                size_t cols = events[k]->getHall().getSeatsByRow();
-                for (size_t i = 0; i < rows; i++)
-                {
-                    for (size_t j = 0; j < cols; j++)
-                    {
-                        if (events[i]->getSeatType(i, j) == seatTypes::reserve)
-                        {
-                            file << "|" << i << j << "|";
-                        }   
-                        else
-                        {
-                            file << "|  |";
-                        }
-                    }
-                    file << std::endl;
-                }
+                helperList(file, k);
             }
         }
     }
@@ -215,38 +196,43 @@ std::ostream& InformationSystem::listWithReservetion(std::string name, Date& dat
         {
             if (events[k]->getName() == name && events[k]->getDate() == date)
             {
-                size_t rows = events[k]->getHall().getRows();
-                size_t cols = events[k]->getHall().getSeatsByRow();
-                for (size_t i = 0; i < rows; i++)
-                {
-                    for (size_t j = 0; j < cols; j++)
-                    {
-                        if (events[k]->getSeatType(i, j) == seatTypes::reserve)
-                        {
-                            file << "|" << i << j << "|";
-                        }
-                        else
-                        {
-                            file << "|  |";
-                        }
-                    }
-                    file << std::endl;
-                }
+                helperList(file, k);
             }
         }        
     }
     return file;
     file.close();
 }
-/*
+
+void InformationSystem::helperList(std::ostream& file, size_t k)
+{
+    size_t rows = events[k]->getHall().getRows();
+    size_t cols = events[k]->getHall().getSeatsByRow();
+    for (size_t i = 0; i < rows; i++)
+    {
+        for (size_t j = 0; j < cols; j++)
+        {
+            if (events[k]->getSeatType(i, j) == seatTypes::reserve)
+            {
+                file << "|" << i << j << "|";
+            }
+            else
+            {
+                file << "|  |";
+            }
+        }
+        file << std::endl;
+    }
+}
+
 std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Date& date1)
 {
     
-    if (date1 > date)
-        throw std::exception("Incorrect period!\n");
+    //if (date > date1)
+      //  throw std::exception("Incorrect period!\n");
 
-    std::ofstream file1("hi");
-    if (!file1.is_open())
+    std::ofstream file("hi");
+    if (!file.is_open())
     {
         std::cout << "File can't be opened!" << std::endl;
     }
@@ -258,37 +244,171 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
             size_t cols = events[e]->getHall().getSeatsByRow();
             for (size_t i = date.getYear(); i <= date1.getYear(); i++)
             {
-                file1 << "year: " << i;
-                for (size_t j = date.getMonth(); j <= date1.getMonth(); j++)
+                if (events[e]->getDate().getYear() == i)
                 {
-                    file1 << " month: " << j;
-                    for (size_t k = date.getDay(); k <= date1.getDay(); k++)
+                    if (date.getYear() == date1.getYear())
                     {
-                        file1 << " day: " << k << std::endl;
-                        for (size_t r = 0; r < rows; r++)
+                        file << "year: " << i;
+                        for (size_t j = date.getMonth(); j <= date1.getMonth(); j++)
                         {
-                            for (size_t c = 0; c < cols; c++)
+                            if (events[e]->getDate().getMonth() == j)
                             {
-                                if(events[e]->getSeatType(r, c)== seatTypes::sold)
+                                file << " month: " << j;
+                                if (date.getMonth() == date1.getMonth())
                                 {
-                                    file1 << "|" << r << c << "|";
+                                    for (size_t k = date.getDay(); k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                                else if (j < date1.getMonth())
+                                {
+                                    for (size_t k = 1; k <= 31; k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    file1 << "|  |";
+                                    for (size_t k = 1; k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
                                 }
                             }
-                            file1 << std::endl;
+                        }
+                    }  
+                    else if (i < date1.getYear())
+                    {
+                        file << "year: " << i;
+                        for (size_t j = 1; j <= 12; j++)
+                        {
+                            if (events[e]->getDate().getMonth() == j)
+                            {
+                                file << " month: " << j;
+                                if (date.getMonth() == date1.getMonth())
+                                {
+                                    for (size_t k = date.getDay(); k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                                else if (j < date1.getMonth())
+                                {
+                                    for (size_t k = 1; k <= 31; k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for (size_t k = 1; k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                }
+                    else
+                    {
+                        file << "year: " << i;
+                        for (size_t j = 1; j <= date1.getMonth(); j++)
+                        {
+                            if (events[e]->getDate().getMonth() == j)
+                            {
+                                file << " month: " << j;
+                                if (date.getMonth() == date1.getMonth())
+                                {
+                                    for (size_t k = date.getDay(); k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                                else if (j < date1.getMonth())
+                                {
+                                    for (size_t k = 1; k <= 31; k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for (size_t k = 1; k <= date1.getDay(); k++)
+                                    {
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                
             }
         }
     }
-    return file1;
-    file1.close();
+    return file;
+    file.close();
 }
-*/
+
+void InformationSystem::helperReport(std::ostream& file, size_t rows, size_t cols, size_t e)
+{
+    size_t sold = 0;
+    
+    for (size_t r = 0; r < rows; r++)
+    {
+        for (size_t c = 0; c < cols; c++)
+        {
+            if (events[e]->getSeatType(r, c) == seatTypes::sold)
+            {
+                file << "|" << r << c << "|";
+                ++sold;
+            }
+            else
+            {
+                file << "|  |";
+            }
+        }
+        file << std::endl;
+    }
+    file << "Event: " << events[e]->getName() << " with sold tickets: " << sold << std::endl;
+}
+
 void InformationSystem::print(std::ostream& os) const
 {
     for (size_t i = 0; i < cnt; i++)
