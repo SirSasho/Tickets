@@ -258,21 +258,33 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
                                 {
                                     for (size_t k = date.getDay(); k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else if (j < date1.getMonth())
                                 {
                                     for (size_t k = 1; k <= 31; k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else
                                 {
                                     for (size_t k = 1; k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                             }
@@ -290,21 +302,33 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
                                 {
                                     for (size_t k = date.getDay(); k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else if (j < date1.getMonth())
                                 {
                                     for (size_t k = 1; k <= 31; k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else
                                 {
                                     for (size_t k = 1; k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                             }
@@ -322,21 +346,33 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
                                 {
                                     for (size_t k = date.getDay(); k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else if (j < date1.getMonth())
                                 {
                                     for (size_t k = 1; k <= 31; k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                                 else
                                 {
                                     for (size_t k = 1; k <= date1.getDay(); k++)
                                     {
-                                        helperReport(file, rows, cols, e, k);
+                                        if (events[e]->getDate().getDay() == k)
+                                        {
+                                            file << " day: " << k << std::endl;
+                                            helperReport(file, rows, cols, e);
+                                        }
                                     }
                                 }
                             }
@@ -350,31 +386,26 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
     file.close();
 }
 
-void InformationSystem::helperReport(std::ostream& file, size_t rows, size_t cols, size_t e, size_t k)
+void InformationSystem::helperReport(std::ostream& file, size_t rows, size_t cols, size_t e)
 {
     size_t sold = 0;
     
-    if (events[e]->getDate().getDay() == k)
+    for (size_t r = 0; r < rows; r++)
     {
-        file << " day: " << k << std::endl;
-        for (size_t r = 0; r < rows; r++)
+        for (size_t c = 0; c < cols; c++)
         {
-            for (size_t c = 0; c < cols; c++)
+            if (events[e]->getSeatType(r, c) == seatTypes::sold)
             {
-                if (events[e]->getSeatType(r, c) == seatTypes::sold)
-                {
-                    file << "|" << r << c << "|";
-                    ++sold;
-                }
-                else
-                {
-                    file << "|  |";
-                }
+                file << "|" << r << c << "|";
+                ++sold;
             }
-            file << std::endl;
+            else
+            {
+                file << "|  |";
+            }
         }
+        file << std::endl;
     }
-    
     file << "Event: " << events[e]->getName() << " with sold tickets: " << sold << std::endl;
 }
 
