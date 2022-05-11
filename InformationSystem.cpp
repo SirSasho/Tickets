@@ -18,7 +18,7 @@ void InformationSystem::free()
 {
     for (size_t i = 0; i < cnt; ++i)
     {
-        events[i]->Event::~Event();
+        events[i]->~Event();
     }
 
     delete[] events;
@@ -82,7 +82,8 @@ void InformationSystem::pushEvent(Event& event)
         if (events[i]->getHallId() == event.getHallId() && events[i]->getDate() == event.getDate())
             throw;
     }
-    events[cnt++] = &event;
+    events[cnt++] = new Event(event);
+    std::cout << "Pushed event!" << std::endl;
     capacity--;
 }
 
@@ -105,6 +106,7 @@ void InformationSystem::reserveTickets(const std::string name, Date& date, size_
             std::cout << "Ticket for " << name << " with seat " << row << col << " and password " << password
                 << " is successfully reserved!" << std::endl;
         }
+        std::cout << std::endl;
     }
 }
 
@@ -173,8 +175,9 @@ void InformationSystem::buyTickets(const std::string name, Date& date, size_t ro
 
 std::ostream& InformationSystem::listWithReservetion(std::string name, Date& date)
 {
-    std::ofstream file("name");
-
+    std::ofstream file(name);
+    
+   
     if (!file.is_open())
     {
         std::cout << "File can't be opened!" << std::endl;
@@ -182,18 +185,24 @@ std::ostream& InformationSystem::listWithReservetion(std::string name, Date& dat
     }
     if (name == "ALL")
     {
-        for (size_t i = 0; i < cnt; ++i)
+        for (size_t k = 0; k < cnt; ++k)
         {
-            if (events[i]->getDate() == date)
+            if (events[k]->getDate() == date)
             {
-                size_t rows = events[i]->getHall().getRows();
-                size_t cols = events[i]->getHall().getSeatsByRow();
+                size_t rows = events[k]->getHall().getRows();
+                size_t cols = events[k]->getHall().getSeatsByRow();
                 for (size_t i = 0; i < rows; i++)
                 {
                     for (size_t j = 0; j < cols; j++)
                     {
                         if (events[i]->getSeatType(i, j) == seatTypes::reserve)
-                            file << i << j << " ";
+                        {
+                            file << "|" << i << j << "|";
+                        }   
+                        else
+                        {
+                            file << "|  |";
+                        }
                     }
                     file << std::endl;
                 }
@@ -202,18 +211,24 @@ std::ostream& InformationSystem::listWithReservetion(std::string name, Date& dat
     }
     else
     {
-        for (size_t i = 0; i < cnt; i++)
+        for (size_t k = 0; k < cnt; k++)
         {
-            if (events[i]->getName() == name && events[i]->getDate() == date)
+            if (events[k]->getName() == name && events[k]->getDate() == date)
             {
-                size_t rows = events[i]->getHall().getRows();
-                size_t cols = events[i]->getHall().getSeatsByRow();
+                size_t rows = events[k]->getHall().getRows();
+                size_t cols = events[k]->getHall().getSeatsByRow();
                 for (size_t i = 0; i < rows; i++)
                 {
                     for (size_t j = 0; j < cols; j++)
                     {
-                        if (events[i]->getSeatType(i, j) == seatTypes::reserve)
-                            file << i << j << " ";
+                        if (events[k]->getSeatType(i, j) == seatTypes::reserve)
+                        {
+                            file << "|" << i << j << "|";
+                        }
+                        else
+                        {
+                            file << "|  |";
+                        }
                     }
                     file << std::endl;
                 }
@@ -222,6 +237,65 @@ std::ostream& InformationSystem::listWithReservetion(std::string name, Date& dat
     }
     return file;
     file.close();
+}
+/*
+std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Date& date1)
+{
+    
+    if (date1 > date)
+        throw std::exception("Incorrect period!\n");
+
+    std::ofstream file1("hi");
+    if (!file1.is_open())
+    {
+        std::cout << "File can't be opened!" << std::endl;
+    }
+    for (size_t e = 0; e < cnt; e++)
+    {
+        if (events[e]->getHallId() == hall.getId())
+        {
+            size_t rows = events[e]->getHall().getRows();
+            size_t cols = events[e]->getHall().getSeatsByRow();
+            for (size_t i = date.getYear(); i <= date1.getYear(); i++)
+            {
+                file1 << "year: " << i;
+                for (size_t j = date.getMonth(); j <= date1.getMonth(); j++)
+                {
+                    file1 << " month: " << j;
+                    for (size_t k = date.getDay(); k <= date1.getDay(); k++)
+                    {
+                        file1 << " day: " << k << std::endl;
+                        for (size_t r = 0; r < rows; r++)
+                        {
+                            for (size_t c = 0; c < cols; c++)
+                            {
+                                if(events[e]->getSeatType(r, c)== seatTypes::sold)
+                                {
+                                    file1 << "|" << r << c << "|";
+                                }
+                                else
+                                {
+                                    file1 << "|  |";
+                                }
+                            }
+                            file1 << std::endl;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return file1;
+    file1.close();
+}
+*/
+void InformationSystem::print(std::ostream& os) const
+{
+    for (size_t i = 0; i < cnt; i++)
+    {
+        os << events[i]->getHall() << events[i]->getDate() << std::endl;
+
+    }
 }
 
 
