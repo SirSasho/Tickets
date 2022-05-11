@@ -27,6 +27,9 @@ public:
 	void unReserveTickets(const std::string, Date& date, size_t row, size_t col, std::string password);
 	void buyTickets(const std::string, Date& date, size_t row, size_t col);
 	std::ostream& listWithReservetion(std::string name, Date& date);
+	std::ostream& reportForSoldTickets(Hall& hall, Date& date, Date& date1);
+
+	void print(std::ostream& os = std::cout) const;
 
 	
 };
