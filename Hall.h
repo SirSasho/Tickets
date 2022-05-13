@@ -15,11 +15,8 @@ public:
 	size_t getRows() const;
 	size_t getSeatsByRow() const;
 	size_t getSeats() const;
-	
 
-	void print() const;
-
-
+	void print(std::ostream& os = std::cout) const;
 };
 
 std::ostream& operator<<(std::ostream&, const Hall&);
