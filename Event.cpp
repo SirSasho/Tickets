@@ -22,7 +22,7 @@ void Event::free()
     size_t rows = hall.getRows();
     for (size_t i = 0; i < rows; ++i)
     {
-        delete seats[i];
+        seats[i]->~Seats();
     }
     delete[] seats;
     
@@ -122,9 +122,25 @@ void Event::updateSeat(size_t row, size_t col, std::string password, seatTypes s
     this->seats[row][col].seatType = seatType;
 }
 
-void Event::print() const
+size_t Event::soldSeats()
 {
-    std::cout << "Event: " << name << std::endl
+    size_t cnt = 0;
+    size_t rows = hall.getRows();
+    size_t cols = hall.getSeatsByRow();
+    for (size_t i = 0; i < rows; ++i)
+    {
+        for (size_t j = 0; j < cols; ++j)
+        {
+            if (seats[i][j].seatType == seatTypes::sold)
+                ++cnt;
+        }
+    }
+    return cnt;
+}
+
+void Event::print(std::ostream& os) const
+{
+        os << "Event: " << name << std::endl
         << "Date:" << date << std::endl
         << "Hall: " << hall << std::endl;
 }
