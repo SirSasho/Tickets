@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 class InformationSystem
 {
 private:
@@ -34,5 +35,9 @@ public:
 	void helperReport1(std::ostream& file, size_t rows, size_t cols, size_t e);
 	void helperReport(std::ostream& file, Date& date, Date& date1, size_t rows, size_t cols, size_t e, size_t j);
 	
+	void printStatisticsForTheMostWatchedEvents(std::ostream& os = std::cout) ;
+	
 	void print(std::ostream& os = std::cout) const;	
 };
+
+
