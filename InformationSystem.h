@@ -31,12 +31,8 @@ public:
 	std::ostream& listWithReservetion(std::string name, Date& date);
 	void helperList(std::ostream& file, size_t k);
 	std::ostream& reportForSoldTickets(Hall& hall, Date& date, Date& date1);
-	void helperReport(std::ostream& file, size_t rows, size_t cols, size_t e);
+	void helperReport1(std::ostream& file, size_t rows, size_t cols, size_t e);
+	void helperReport(std::ostream& file, Date& date, Date& date1, size_t rows, size_t cols, size_t e, size_t j);
 	
-
-	void print(std::ostream& os = std::cout) const;
-
-	
+	void print(std::ostream& os = std::cout) const;	
 };
-
-std::ostream& operator<<(std::ostream&, const InformationSystem&);
