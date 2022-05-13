@@ -21,7 +21,6 @@ public:
 	Event& operator=(const Event& other);
 	~Event();
 
-
 	//void setName(const char* name);
 	const Date& getDate() const;
 	unsigned getHallId() const;
@@ -32,8 +31,8 @@ public:
 	seatTypes getSeatType(size_t row, size_t col);
 
 	void updateSeat(size_t row, size_t col, std::string password, seatTypes seatType);
+	size_t soldSeats();
 
-
-	void print() const;
+	void print(std::ostream& os = std::cout) const;
 };
 
