@@ -24,14 +24,16 @@ size_t Hall::getSeats() const
 	return rows * seatsByRow;
 }
 
-void Hall::print() const
+void Hall::print(std::ostream& os) const
 {
-	std::cout << "Id= " << id << std::endl
+	os << "Id= " << id << std::endl
 		<< "Rows= " << rows << std::endl
 		<< "seatsByRow= " << seatsByRow << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& out, const Hall& hall)
 {
-	return out << hall.getId() << " " << hall.getRows() << " " << hall.getSeatsByRow() << std::endl;
+	return out << "Id= " << hall.getId() << std::endl
+		<< "Rows= " << hall.getRows() << std::endl
+		<< "seatsByRow= " << hall.getSeatsByRow() << std::endl;
 }
