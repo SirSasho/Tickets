@@ -233,7 +233,7 @@ std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Da
     //if (date > date1)
       //  throw std::exception("Incorrect period!\n");
 
-    std::ofstream file("hi");
+    std::ofstream file("report for sold tickets.txt");
     if (!file.is_open())
     {
         std::cout << "File can't be opened!" << std::endl;
@@ -321,6 +321,23 @@ void InformationSystem::helperReport(std::ostream& file, Date& date, Date& date1
     }
 }
 
+void InformationSystem::printStatisticsForTheMostWatchedEvents(std::ostream& os)
+{
+    for (size_t i = 0; i < cnt - 1; ++i)
+    {
+        size_t min = i;
+        for (size_t j = i + 1; j < cnt; ++j)
+        {
+            if (events[j]->soldSeats() > events[min]->soldSeats())
+                std::swap(events[min], events[j]);
+        }               
+    }
+    for (size_t i = 0; i < cnt; i++)
+    {
+        os << "Event: " << events[i]->getName() << " is with " << events[i]->soldSeats() << " sold seats" << std::endl;;
+    }
+}
+
 void InformationSystem::helperReport1(std::ostream& file, size_t rows, size_t cols, size_t e)
 {
     size_t sold = 0;
@@ -348,6 +365,7 @@ void InformationSystem::print(std::ostream& os) const
 {
     for (size_t i = 0; i < cnt; i++)
     {
-        os << events[i]->getHall() << events[i]->getDate() << std::endl;
+        os << "Event: " << events[i]->getName() <<" Date: " << events[i]->getDate().getDay() << "." << events[i]->getDate().getMonth() << "."
+            << events[i]->getDate().getYear() << std::endl;
     }
 }
