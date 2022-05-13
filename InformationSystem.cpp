@@ -351,10 +351,3 @@ void InformationSystem::print(std::ostream& os) const
         os << events[i]->getHall() << events[i]->getDate() << std::endl;
     }
 }
-
-
-/*
-std::ostream& operator<<(std::ostream& out, const InformationSystem& system)
-{
-}
-*/
