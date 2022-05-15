@@ -48,6 +48,11 @@ Event::Event(const std::string name, Date& date, Hall& hall)
     setName(name);
 }*/
 
+Event::Event(const Event& other) :date(other.date), hall(other.hall)
+{
+    copyFrom(other);
+}
+
 Event& Event::operator=(const Event& other)
 {
     if (this != &other)
