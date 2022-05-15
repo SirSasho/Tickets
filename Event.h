@@ -18,6 +18,7 @@ public:
 	
 	Event(const std::string name, Date& date, Hall& hall);
 	//Event(const char* name, size_t day, size_t month, size_t year, unsigned id, size_t rows, size_t seatsByRows);
+	Event(const Event& other);
 	Event& operator=(const Event& other);
 	~Event();
 
