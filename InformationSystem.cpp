@@ -114,21 +114,20 @@ void InformationSystem::reserveTickets(const std::string name, Date& date, size_
 
 void InformationSystem::unReserveTickets(const std::string name, Date& date, size_t row, size_t col, std::string password)
 {
+    bool flag = false;
     for (size_t i = 0; i < cnt; i++)
     {
         if (events[i]->getName() == name && events[i]->getDate() == date
             && events[i]->getSeat(row, col).password == password && events[i]->getSeatType(row, col) == seatTypes::reserve)
         {
             events[i]->updateSeat(row, col, "", seatTypes::empty);
+            flag = true;
             std::cout << "Ticket for " << name << " with seat " << row << col << " and password " << password
                 << " is successfully unreserved!" << std::endl;
-        }
-        else
-        {
-            std::cout << "Ticket for " << name << " with seat " << row << col << " is did not reserve!";
-        }
-            
+        }            
     }
+    if(!flag)
+        std::cout << "Ticket for " << name << " with seat " << row << col << " is did not reserve!";
 }
 
 void InformationSystem::buyTickets(const std::string name, Date& date, size_t row, size_t col)
@@ -172,8 +171,7 @@ void InformationSystem::buyTickets(const std::string name, Date& date, size_t ro
 
 std::ostream& InformationSystem::listWithReservetion(std::string name, Date& date)
 {
-    std::ofstream file(name);
-    
+    std::ofstream file(name);    
    
     if (!file.is_open())
     {
@@ -230,8 +228,8 @@ void InformationSystem::helperList(std::ostream& file, size_t k)
 std::ostream& InformationSystem::reportForSoldTickets(Hall& hall, Date& date, Date& date1)
 {
     
-    //if (date > date1)
-      //  throw std::exception("Incorrect period!\n");
+    if (date > date1)
+        throw std::exception("Incorrect period!\n");
 
     std::ofstream file("report for sold tickets.txt");
     if (!file.is_open())
