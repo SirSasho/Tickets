@@ -9,5 +9,6 @@ Seats::Seats()
 Seats::~Seats()
 {
 	password.clear();
+	seatType = seatTypes::empty;
 }
 
