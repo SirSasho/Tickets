@@ -37,3 +37,4 @@ std::ostream& operator<<(std::ostream& out, const Hall& hall)
 		<< "Rows= " << hall.getRows() << std::endl
 		<< "seatsByRow= " << hall.getSeatsByRow() << std::endl;
 }
+
